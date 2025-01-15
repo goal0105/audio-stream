@@ -5,6 +5,7 @@ const path = require('path');
 
 const app = express();
 app.use(cors());
+app.use(express.json()); // This middleware parses JSON bodies
 
 // Folder containing audio files
 const audioFolder = path.join(__dirname, 'audio');
@@ -19,6 +20,21 @@ app.get('/api/audio-files', (req, res) => {
         res.json(wavFiles);
     });
 });
+
+// Endpoint to log filename
+app.post('/api/log-filename', (req, res) => {
+    const { fileName } = req.body;
+    if (!fileName) {
+        return res.status(400).json({ error: 'Filename is required' });
+    }
+
+    // Log the filename to the server terminal
+    console.log(`File played: ${fileName}`);
+    
+    // Send success response back to the client
+    res.status(200).json({ message: `Filename logged: ${fileName}` });
+});
+
 
 // Endpoint to stream a specific audio file
 app.get('/api/audio/:filename', (req, res) => {

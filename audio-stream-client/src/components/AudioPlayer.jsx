@@ -8,16 +8,26 @@ const AudioPlayer = () => {
     useEffect(() => {
         // Fetch available audio files from the server
         axios.get('http://localhost:5000/api/audio-files')
-            .then(response => setAudioFiles(response.data))
+            .then(response => {
+                setAudioFiles(response.data)
+                console.log('Audio files fetched:', response.data); // Debug fetched files
+            })
             .catch(error => console.error('Error fetching audio files:', error));
     }, []);
 
     const playAudio = (fileName) => {
         setCurrentAudio(`http://localhost:5000/api/audio/${fileName}`);
+
+        // Log the filename to the server
+        axios.post('http://localhost:5000/api/log-filename', { fileName })
+        .then(response => {
+            console.log(response.data.message); // Log the server's response in the client console
+        })
+        .catch(error => console.error('Error logging filename:', error));
     };
 
     return (
-        <div>
+        <div >
             <h1>Audio Streaming</h1>
             <ul>
                 {audioFiles.map(file => (
